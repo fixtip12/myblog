@@ -11,47 +11,14 @@ use Illuminate\Support\Facades\Auth;
 
 class ArticleController extends Controller
 {
+     //==========ここまで追加========== 
 
     public function index()
     {
-        //==========ここから削除==========
-        // ダミーデータ
-        $articles = [
-            (object) [
-                'id' => 1,
-                'title' => 'タイトル1',
-                'body' => '本文1',
-                'created_at' => now(),
-                'user' => (object) [
-                    'id' => 1,
-                    'name' => 'ユーザー名1',
-                ],
-            ],
-            (object) [
-                'id' => 2,
-                'title' => 'タイトル2',
-                'body' => '本文2',
-                'created_at' => now(),
-                'user' => (object) [
-                    'id' => 2,
-                    'name' => 'ユーザー名2',
-                ],
-            ],
-            (object) [
-                'id' => 3,
-                'title' => 'タイトル3',
-                'body' => '本文3',
-                'created_at' => now(),
-                'user' => (object) [
-                    'id' => 3,
-                    'name' => 'ユーザー名3',
-                ],
-            ],
-        ];
-        //==========ここまで削除==========
         //==========ここから追加==========
         $articles = Article::all()->sortByDesc('created_at');
         //==========ここまで追加==========
+
 
         return view('articles.index', ['articles' => $articles]);
     }
@@ -75,19 +42,33 @@ class ArticleController extends Controller
 
     public function edit(Article $article)
     {
+        if(Auth::id() !== $article->user_id){
+            return redirect()->route('articles.index')->with('error_message', '不正なアクセスです。');
+        }
         return view('articles.edit', ['article' => $article]);    
     }
     //==========ここまで追加==========
 
     public function update(ArticleRequest $request, Article $article)
     {
+        if(Auth::id() !== $article->user_id){
+            return redirect()->route('articles.index')->with('error_message', '不正なアクセスです。');
+        }
         $article->fill($request->validated())->save();
         return redirect()->route('articles.index');
     }
 
     public function destroy(Article $article)
     {
+        if(Auth::id() !== $article->user_id){
+            return redirect()->route('articles.index')->with('error_message', '不正なアクセスです。');
+        }
         $article->delete();
         return redirect()->route('articles.index')->with('message', '記事を削除しました。');
     }
+
+    public function show(Article $article)
+    {
+        return view('articles.show', ['article' => $article]);
+    }    
 }
