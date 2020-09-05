@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 //==========ここから追加==========
 use App\Article;
+use App\Http\Requests\ArticleRequest;
 //==========ここまで追加==========
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ArticleController extends Controller
 {
@@ -53,4 +55,21 @@ class ArticleController extends Controller
 
         return view('articles.index', ['articles' => $articles]);
     }
+
+    public function create()
+    {
+        return view('articles.create');    
+    }
+
+     //==========ここから追加==========
+     public function store(ArticleRequest $request, Article $article)
+     {
+        $article->fill(array_merge(
+            $request->validated(),
+            ['user_id' => Auth::id()]
+        ))->save();
+
+        return redirect()->route('articles.index');
+     }
+     //==========ここまで追加==========
 }
