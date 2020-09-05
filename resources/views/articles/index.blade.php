@@ -4,6 +4,9 @@
 
 @section('content')
   @include('nav')
+  @if (session('message'))
+  <div class="alert alert-success mt-3">{{ session('message') }}</div>
+  @endif
   <div class="container">
     @foreach($articles as $article)
     <div class="card mt-3">
