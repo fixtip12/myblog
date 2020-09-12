@@ -70,6 +70,8 @@
         <article-like
       :initial-is-liked-by='@json($article->isLikedBy(Auth::user()))'
       :initial-count-likes='@json($article->likes_count)'
+      :authorized='@json(Auth::check())'
+      endpoint="{{ route('articles.like', ['article' => $article]) }}"
         >
         {{--ここまで追加--}}
         </article-like>
